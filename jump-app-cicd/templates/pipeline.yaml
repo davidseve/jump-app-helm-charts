@@ -296,9 +296,3 @@ spec:
     requests:
       storage: 2Gi
 {{- end }}
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: build-bot
-secrets:
-  - name: github-token
