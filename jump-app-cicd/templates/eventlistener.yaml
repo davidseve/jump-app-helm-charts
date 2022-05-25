@@ -5,6 +5,7 @@ kind: EventListener
 metadata:
   name: listener-{{ $key }}-v1-deploy
 spec:
+  serviceAccountName: {{ $.Values.sa }}
   triggers:
     - name: trigger-{{ $key }}-build
       interceptors:
