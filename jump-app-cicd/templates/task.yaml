@@ -272,7 +272,7 @@ spec:
       script: |
         #!/usr/bin/env bash
         cd $(workspaces.source.path)     
-        sed -i '/    "$(params.app)":/{n;s/.*/      imagetag: "$(params.commit)"/}' values.yaml
+        sed -i '/    $(params.app):/{n;s/.*/      imagetag: $(params.commit)/}' values.yaml
         cat values.yaml
   workspaces:
     - name: source

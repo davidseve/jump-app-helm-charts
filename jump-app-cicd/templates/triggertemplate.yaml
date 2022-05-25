@@ -37,7 +37,6 @@ spec:
       metadata:
         name: run-{{ $key }}-$(uid)
       spec:
-        serviceAccountName: {{ $.Values.sa }}
         pipelineRef:
           name: pipeline-{{ $key }}-build
         resources:
