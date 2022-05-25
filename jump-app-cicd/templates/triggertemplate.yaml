@@ -52,4 +52,8 @@ spec:
             value: $(tt.params.git-branch)
           - name: git-commit  
             value: $(tt.params.git-commit)
+          - name: helm-git-url
+            value: {{ $.Values.helmGitUrl }}
+          - name: helm-git-revision
+            value: {{ $.Values.helmGitRevision }}
 {{- end }}

@@ -15,6 +15,17 @@ spec:
       type: string
     - name: git-commit
       type: string
+  #Seve
+    - name: helm-git-url
+      type: string
+      description: The application helm git repository url
+    - name: helm-git-revision
+      type: string
+      default: main
+      description: The application helm git repository revision
+  workspaces:
+   - name: app-helm-source
+
   tasks:
     - name: app-test
       taskRef:
@@ -53,8 +64,9 @@ spec:
     - name: app-argocd-generate-cred-secret
       taskRef:
         name: argocd-generate-secret
-      runAfter:
-        - app-image-tag-commit-dev
+      #Seve change
+      #runAfter:
+      #  - app-image-tag-commit-dev
     - name: app-image-deploy-by-argocd-dev
       taskRef:
         name: argocd-task-sync-and-wait
@@ -67,9 +79,58 @@ spec:
           value: "{{ $.Values.namespaceDev }}"
         - name: commit
           value: "$(params.git-commit)"
+    #Add Seve
+    - name: helm-git-clone
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      runAfter:
+        - app-image-tag-commit-dev
+      params:
+      - name: url
+        value: $(params.helm-git-url)
+      - name: revision
+        value: $(params.helm-git-revision)
+      - name: deleteExisting
+        value: 'true'
+      workspaces:
+      - name: output
+        workspace: app-helm-source
+    - name: app-set-new-imagetag
+      taskRef:
+        name: task-set-imagetag-commit
+      runAfter:
+        - helm-git-clone
+      params:
+        - name: app
+          value: '{{ $key }}'   
+        - name: commit
+          value: "$(params.git-commit)"
+      workspaces:
+        - name: source
+          workspace: app-source
+    - name: commit-new-imagetag
+      runAfter:
+      - app-set-new-imagetag
+      taskRef:
+        name: git-cli
+      params:
+        - name: GIT_USER_NAME
+          value: davidseve
+        - name: GIT_USER_EMAIL
+          value: davidseve16@gmail.com
+        - name: GIT_SCRIPT
+          value: |
+            cd $(workspaces.source.path)
+            git add values.yaml
+            git commit -m "'{{ $key }}' new imagetag '$(params.git-commit)'"
+            git push origin HEAD:$(params.helm-git-revision)
+      workspaces:
+      - name: source
+        workspace: app-source
     - name: app-image-deployment-test-dev
       taskRef:
-        name: task-new-commit-image-deployment-test
+        name: commit-new-imagetag
       runAfter:
         - app-image-deploy-by-argocd-dev
       params:

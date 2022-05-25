@@ -253,3 +253,26 @@ spec:
           echo "FAIL - Image with commit "$(params.commit)" not found"
           exit 1
         fi
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-set-imagetag-commit
+spec:
+  params:
+    - description: The name of the app
+      name: app
+      type: string
+    - description: The name of the app commit
+      name: commit
+      type: string
+  steps:
+    - name: change-new-image-tag
+      image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+      script: |
+        #!/usr/bin/env bash
+        cd $(workspaces.source.path)     
+        sed -i '/    "$(params.app)":/{n;s/.*/      imagetag: "$(params.commit)"/}' values.yaml
+        cat values.yaml
+  workspaces:
+    - name: source
