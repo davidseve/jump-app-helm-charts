@@ -285,4 +285,15 @@ spec:
           value: "{{ $.Values.gitBranchPro }}"
         - name: commit
           value: "production"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pipeline-{{ $key }}-build-workspace-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
 {{- end }}

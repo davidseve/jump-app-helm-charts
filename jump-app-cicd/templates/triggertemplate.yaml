@@ -56,4 +56,9 @@ spec:
             value: {{ $.Values.helmGitUrl }}
           - name: helm-git-revision
             value: {{ $.Values.helmGitRevision }}
+        workspaces:
+          - name: app-source
+            persistentVolumeClaim:
+              claimName: pipeline-{{ $key }}-build-workspace-pvc
+                
 {{- end }}
