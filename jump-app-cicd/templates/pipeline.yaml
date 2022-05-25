@@ -108,7 +108,7 @@ spec:
           value: "$(params.git-commit)"
       workspaces:
         - name: source
-          workspace: app-source
+          workspace: app-helm-source
     - name: commit-new-imagetag
       runAfter:
       - app-set-new-imagetag
