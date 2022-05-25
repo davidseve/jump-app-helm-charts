@@ -8,6 +8,11 @@ spec:
   serviceAccountName: {{ $.Values.sa }}
   triggers:
     - name: trigger-{{ $key }}-build
+      interceptors:
+        - github:
+            secretRef:
+              secretName: github-interceptor-webhook
+              secretKey: secretToken
       bindings:
         - ref: triggerbinding-{{ $key }}-build
       template:
