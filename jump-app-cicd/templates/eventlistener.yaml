@@ -12,7 +12,7 @@ spec:
         - github:
             secretRef:
               secretName: github-interceptor-webhook
-              secretKey: secretToken
+              secretKey: secret
       bindings:
         - ref: triggerbinding-{{ $key }}-build
       template:
