@@ -126,8 +126,8 @@ spec:
             git commit -m "'{{ $key }}' new imagetag '$(params.git-commit)'"
             git push origin HEAD:$(params.helm-git-revision)
       workspaces:
-      - name: source
-        workspace: app-source
+        - name: source
+          workspace: app-helm-source
     - name: app-image-deployment-test-dev
       taskRef:
         name: commit-new-imagetag
