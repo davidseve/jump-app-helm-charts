@@ -11,17 +11,6 @@ spec:
     - name: git-commit
   resourcetemplates:
     - apiVersion: tekton.dev/v1alpha1
-      kind: PipelineResource
-      metadata:
-        name: tests-$(uid)
-      spec:
-        type: git
-        params:
-          - name: revision
-            value: {{ $.Values.functTestRepoBranch }}
-          - name: url
-            value: {{ $.Values.functTestRepo }}
-    - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
       metadata:
         name: run-{{ $key }}-$(uid)
@@ -29,10 +18,6 @@ spec:
         serviceAccountName: {{ $.Values.sa }}
         pipelineRef:
           name: pipeline-{{ $key }}-build
-        resources:
-          - name: functional-test-repo
-            resourceRef:
-              name: tests-$(uid)
         params:
           - name: app-git-branch  
             value: $(tt.params.git-url)
@@ -40,6 +25,10 @@ spec:
             value: $(tt.params.git-branch)
           - name: git-commit  
             value: $(tt.params.git-commit)
+          - name: functTestRepoBranch
+            value: {{ $.Values.functTestRepoBranch }}
+          - name: functTestRepo
+            value: {{ $.Values.functTestRepo }}
           - name: helm-git-url
             value: {{ $.Values.helmGitUrl }}
           - name: helm-git-revision

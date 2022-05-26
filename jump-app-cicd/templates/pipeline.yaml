@@ -5,18 +5,18 @@ kind: Pipeline
 metadata:
   name: pipeline-{{ $key }}-build
 spec:
-  disable-home-env-overwrite: false
-  resources:
-    - name: functional-test-repo
-      type: git
   params:
-    - name: app-git-branch 
-      type: string
     - name: git-branch  
       type: string
     - name: git-commit
       type: string
   #Seve
+    - name: app-git-branch 
+      type: string
+    - name: functTestRepoBranch 
+      type: string
+    - name: functTestRepoBranch 
+      type: string
     - name: helm-git-url
       type: string
       description: The application helm git repository url
@@ -77,77 +77,78 @@ spec:
           value: "{{ $.Values.gitBranchDev }}"
         - name: commit
           value: "$(params.git-commit)"
-    # - name: app-argocd-generate-cred-secret
-    #   taskRef:
-    #     name: argocd-generate-secret
-    #   runAfter:
-    #     - app-image-tag-commit-dev
-    # - name: app-image-deploy-by-argocd-dev
-    #   taskRef:
-    #     name: argocd-task-sync-and-wait
-    #   runAfter:
-    #     - app-argocd-generate-cred-secret
-    #   params:
-    #     - name: app
-    #       value: '{{ $key }}'   
-    #     - name: argoapp
-    #       value: "{{ $.Values.namespaceDev }}"
-    #     - name: commit
-    #       value: "$(params.git-commit)"
-    #Add Seve
-    - name: helm-git-clone
+    - name: app-argocd-generate-cred-secret
       taskRef:
-        kind: ClusterTask
-        name: git-clone
+        name: argocd-generate-secret
       runAfter:
         - app-image-tag-commit-dev
-      params:
-      - name: url
-        value: $(params.helm-git-url)
-      - name: revision
-        value: $(params.helm-git-revision)
-      - name: deleteExisting
-        value: 'true'
-      workspaces:
-      - name: output
-        workspace: app-helm-source
-    - name: app-set-new-imagetag
+    - name: app-image-deploy-by-argocd-dev
       taskRef:
-        name: task-set-imagetag-commit
+        name: argocd-task-sync-and-wait
       runAfter:
-        - helm-git-clone
+        - app-argocd-generate-cred-secret
       params:
         - name: app
           value: '{{ $key }}'   
+        - name: argoapp
+          value: "{{ $.Values.namespaceDev }}"
         - name: commit
           value: "$(params.git-commit)"
-      workspaces:
-        - name: source
-          workspace: app-helm-source
-    - name: commit-new-imagetag
-      runAfter:
-      - app-set-new-imagetag
-      taskRef:
-        name: git-cli
-      params:
-        - name: GIT_USER_NAME
-          value: davidseve
-        - name: GIT_USER_EMAIL
-          value: davidseve16@gmail.com
-        - name: GIT_SCRIPT
-          value: |
-            cd $(workspaces.source.path)
-            git add values.yaml
-            git commit -m "'{{ $key }}' new imagetag '$(params.git-commit)'"
-            git push origin HEAD:$(params.helm-git-revision)
-      workspaces:
-        - name: source
-          workspace: app-helm-source
+    #Add Seve
+    # - name: helm-git-clone
+    #   taskRef:
+    #     kind: ClusterTask
+    #     name: git-clone
+    #   runAfter:
+    #     - app-image-tag-commit-dev
+    #   params:
+    #   - name: url
+    #     value: $(params.helm-git-url)
+    #   - name: revision
+    #     value: $(params.helm-git-revision)
+    #   - name: deleteExisting
+    #     value: 'true'
+    #   workspaces:
+    #   - name: output
+    #     workspace: app-helm-source
+    # - name: app-set-new-imagetag
+    #   taskRef:
+    #     name: task-set-imagetag-commit
+    #   runAfter:
+    #     - helm-git-clone
+    #   params:
+    #     - name: app
+    #       value: '{{ $key }}'   
+    #     - name: commit
+    #       value: "$(params.git-commit)"
+    #   workspaces:
+    #     - name: source
+    #       workspace: app-helm-source
+    # - name: commit-new-imagetag
+    #   runAfter:
+    #   - app-set-new-imagetag
+    #   taskRef:
+    #     name: git-cli
+    #   params:
+    #     - name: GIT_USER_NAME
+    #       value: davidseve
+    #     - name: GIT_USER_EMAIL
+    #       value: davidseve16@gmail.com
+    #     - name: GIT_SCRIPT
+    #       value: |
+    #         cd $(workspaces.source.path)
+    #         git add values.yaml
+    #         git commit -m "'{{ $key }}' new imagetag '$(params.git-commit)'"
+    #         git push origin HEAD:$(params.helm-git-revision)
+    #   workspaces:
+    #     - name: source
+    #       workspace: app-helm-source
     - name: app-image-deployment-test-dev
       taskRef:
         name: task-new-commit-image-deployment-test
       runAfter:
-        - commit-new-imagetag
+        #- commit-new-imagetag
+         - app-image-deploy-by-argocd-dev
       params:
         - name: namespace
           value: "{{ $.Values.namespaceDev }}"
@@ -215,18 +216,33 @@ spec:
           value: "v1"
         - name: commit
           value: "$(params.git-commit)"
-    - name: app-functional-tests-pre
+    - name: test-app-git-clone
       taskRef:
         name: task-new-commit-pre-functional-tests
-      resources:
-        inputs:
-          - name: workspace
-            resource: functional-test-repo
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      params:
+      - name: url
+        value: $(params.functTestRepo)
+      - name: revision
+        value: $(params.functTestRepoBranch)
+      - name: deleteExisting
+        value: 'true'
+      workspaces:
+        - name: output
+          workspace: app-helm-source
+    - name: app-functional-tests-pre
+      taskRef:
+        name: test-app-git-clone
       runAfter:
         - app-image-deployment-test-pre
       params:
         - name: appurl
           value: 'https://{{ $.Values.functTestMicro }}-{{ $.Values.namespacePre }}.{{ $.Values.global.appsDomain }}'
+      workspaces:
+        - name: source
+          workspace: app-helm-source
     - name: app-image-tag-commit-pro
       taskRef:
         name: task-new-commit-image-tag
@@ -264,7 +280,7 @@ spec:
         - name: version
           value: "v1"
         - name: commit
-          value: "$(params.git-commit)"
+          value: "$(params.git-commit)"e
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
