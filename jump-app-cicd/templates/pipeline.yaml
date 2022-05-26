@@ -25,7 +25,7 @@ spec:
       description: The application helm git repository revision
   workspaces:
    - name: app-helm-source
-
+ 
   tasks:
     - name: app-git-clone
       taskRef:
