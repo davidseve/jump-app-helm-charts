@@ -217,8 +217,8 @@ spec:
         - name: commit
           value: "$(params.git-commit)"
     - name: test-app-git-clone
-      taskRef:
-        name: task-new-commit-pre-functional-tests
+      runAfter:
+        - app-image-deployment-test-pre
       taskRef:
         kind: ClusterTask
         name: git-clone
