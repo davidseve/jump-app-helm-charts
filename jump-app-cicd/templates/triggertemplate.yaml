@@ -13,17 +13,6 @@ spec:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineResource
       metadata:
-        name: code-$(uid)
-      spec:
-        type: git
-        params:
-          - name: revision
-            value: $(tt.params.git-commit)
-          - name: url
-            value: $(tt.params.git-url)
-    - apiVersion: tekton.dev/v1alpha1
-      kind: PipelineResource
-      metadata:
         name: tests-$(uid)
       spec:
         type: git
@@ -48,6 +37,8 @@ spec:
             resourceRef:
               name: tests-$(uid)
         params:
+          - name: app-git-branch  
+            value: $(tt.params.git-url)
           - name: git-branch  
             value: $(tt.params.git-branch)
           - name: git-commit  

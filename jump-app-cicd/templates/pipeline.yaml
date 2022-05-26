@@ -33,9 +33,9 @@ spec:
         name: git-clone
       params:
       - name: url
-        value: $(params.helm-git-url)
+        value: $(params.app-git-branch)
       - name: revision
-        value: $(params.helm-git-revision)
+        value: $(params.git-commit)
       - name: deleteExisting
         value: 'true'
       workspaces:
