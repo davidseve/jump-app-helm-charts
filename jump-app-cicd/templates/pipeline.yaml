@@ -13,7 +13,7 @@ spec:
   #Seve
     - name: app-git-branch 
       type: string
-    - name: functTestRepoBranch 
+    - name: functTestRepo 
       type: string
     - name: functTestRepoBranch 
       type: string
