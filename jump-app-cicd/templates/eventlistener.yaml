@@ -19,10 +19,6 @@ spec:
           ref:	
             kind: ClusterInterceptor	
             name: github
-        - github:
-            secretRef:
-              secretName: github-interceptor-webhook
-              secretKey: secret
       bindings:
         - kind: TriggerBinding
           ref: triggerbinding-{{ $key }}-build
