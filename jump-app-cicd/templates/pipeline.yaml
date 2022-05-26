@@ -5,6 +5,7 @@ kind: Pipeline
 metadata:
   name: pipeline-{{ $key }}-build
 spec:
+  disable-home-env-overwrite: false
   resources:
     - name: functional-test-repo
       type: git
