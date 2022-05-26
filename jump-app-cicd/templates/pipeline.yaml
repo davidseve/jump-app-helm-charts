@@ -324,9 +324,6 @@ spec:
           value: "{{ $.Values.gitBranchPro }}"
         - name: commit
           value: "production"
-      workspaces:
-        - name: source
-          workspace: app-helm-source
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
