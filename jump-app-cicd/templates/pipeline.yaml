@@ -298,6 +298,9 @@ spec:
           value: '{{ $key }}-dev'
         - name: commit
           value: '{{ $.Values.gitBranchDev }}'
+      workspaces:
+        - name: source
+          workspace: app-helm-source
     - name: app-build-pre
       taskRef:
         name: task-new-commit-start-build-tag
@@ -306,6 +309,9 @@ spec:
           value: '{{ $key }}-pre'
         - name: commit
           value: '{{ $.Values.gitBranchPro }}'
+      workspaces:
+        - name: source
+          workspace: app-helm-source
     - name: app-image-tag-pro
       taskRef:
         name: task-new-commit-image-tag
@@ -318,6 +324,9 @@ spec:
           value: "{{ $.Values.gitBranchPro }}"
         - name: commit
           value: "production"
+      workspaces:
+        - name: source
+          workspace: app-helm-source
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
