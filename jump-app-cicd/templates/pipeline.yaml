@@ -287,6 +287,8 @@ kind: Pipeline
 metadata:
   name: pipeline-{{ $key }}-build-init-images
 spec:
+  workspaces:
+   - name: app-helm-source
   tasks:
     - name: app-build-dev
       taskRef:

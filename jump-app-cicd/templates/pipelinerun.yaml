@@ -11,4 +11,8 @@ spec:
   serviceAccountName: {{ $.Values.sa }}
   pipelineRef:
     name: pipeline-{{ $key }}-build-init-images
+  workspaces:
+    - name: app-helm-source
+      persistentVolumeClaim:
+        claimName: pipeline-{{ $key }}-build-workspace-pvc
 {{- end }}
