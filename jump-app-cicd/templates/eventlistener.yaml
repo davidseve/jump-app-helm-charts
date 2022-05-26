@@ -9,12 +9,23 @@ spec:
   triggers:
     - name: trigger-{{ $key }}-build
       interceptors:
+        - params:	
+            - name: secretRef	
+              value:	
+                secretKey: secret	
+                secretName: github-interceptor-webhook	
+            - name: eventTypes	
+              value: null	
+          ref:	
+            kind: ClusterInterceptor	
+            name: github
         - github:
             secretRef:
               secretName: github-interceptor-webhook
               secretKey: secret
       bindings:
-        - ref: triggerbinding-{{ $key }}-build
+        - kind: TriggerBinding
+          ref: triggerbinding-{{ $key }}-build
       template:
         ref: triggertemplate-{{ $key }}-build
 {{- end }}
