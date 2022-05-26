@@ -47,7 +47,7 @@ spec:
       taskRef:
         name: task-{{ $val.type }}-new-commit-test
       workspaces:
-        - name: output
+        - name: source
           workspace: app-helm-source
     - name: app-build-dev
       when:
