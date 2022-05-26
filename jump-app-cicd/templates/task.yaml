@@ -5,15 +5,8 @@ kind: Task
 metadata:
   name: task-{{ $type }}-new-commit-test
 spec:
-  resources:
-    inputs:
-      - name: workspace
-        type: git
-        targetPath: git-app
-  stepTemplate:
-    env:
-      - name: HOME
-        value: /workspace
+  workspaces:
+    - name: source
   steps:
 {{- if eq $type "nodejs"}}
     - name: npm-install
@@ -23,7 +16,7 @@ spec:
         - -c
       args:
         - npm install
-      workingDir: /workspace/git-app
+      workingDir: $(workspaces.source.path)
     - name: npm-test
       image: ubi8/nodejs-14
       command:
@@ -31,7 +24,7 @@ spec:
         - -c
       args:
         - npm run test
-      workingDir: /workspace/git-app
+      workingDir: $(workspaces.source.path)
 {{- end }}
 {{- if eq $type "java"}}
     - name: mvn-package
@@ -40,7 +33,7 @@ spec:
         - /usr/bin/mvn
       args:
       - package
-      workingDir: /workspace/git-app
+      workingDir: $(workspaces.source.path)
 {{- end }}
 {{- if eq $type "python"}}
     - name: pip-install-test
@@ -50,7 +43,7 @@ spec:
         - -c
       args:
         - pip install -r requirements.txt && pytest -v
-      workingDir: /workspace/git-app
+      workingDir: $(workspaces.source.path)
 {{- end }}
 {{- if eq $type "golang"}}
     - name: go-test
@@ -60,7 +53,7 @@ spec:
         - -c
       args:
         - make test
-      workingDir: /workspace/git-app
+      workingDir: $(workspaces.source.path)
 {{- end }}
 {{- end }}
 ---

@@ -27,13 +27,28 @@ spec:
    - name: app-helm-source
 
   tasks:
+    - name: app-git-clone
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      params:
+      - name: url
+        value: $(params.helm-git-url)
+      - name: revision
+        value: $(params.helm-git-revision)
+      - name: deleteExisting
+        value: 'true'
+      workspaces:
+        - name: output
+          workspace: app-helm-source
     - name: app-test
+      runAfter:
+        - app-git-clone
       taskRef:
         name: task-{{ $val.type }}-new-commit-test
-      resources:
-        inputs:
-          - name: workspace
-            resource: source-repo
+      workspaces:
+        - name: output
+          workspace: app-helm-source
     - name: app-build-dev
       when:
         - input: $(params.git-branch)
