@@ -280,7 +280,7 @@ spec:
         - name: version
           value: "v1"
         - name: commit
-          value: "$(params.git-commit)"e
+          value: "$(params.git-commit)"
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
