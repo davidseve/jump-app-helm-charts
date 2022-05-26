@@ -234,9 +234,9 @@ spec:
           workspace: app-helm-source
     - name: app-functional-tests-pre
       taskRef:
-        name: test-app-git-clone
+        name: task-new-commit-pre-functional-tests
       runAfter:
-        - app-image-deployment-test-pre
+        - test-app-git-clone
       params:
         - name: appurl
           value: 'https://{{ $.Values.functTestMicro }}-{{ $.Values.namespacePre }}.{{ $.Values.global.appsDomain }}'
