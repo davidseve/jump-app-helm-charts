@@ -30,9 +30,6 @@ spec:
         pipelineRef:
           name: pipeline-{{ $key }}-build
         resources:
-          - name: source-repo
-            resourceRef:
-              name: code-$(uid)
           - name: functional-test-repo
             resourceRef:
               name: tests-$(uid)
