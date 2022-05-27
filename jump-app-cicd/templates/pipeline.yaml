@@ -65,6 +65,9 @@ spec:
           value: '{{ $key }}-dev'
         - name: commit
           value: "$(params.git-commit)"
+      workspaces:
+        - name: source
+          workspace: app-helm-source
     - name: app-image-tag-commit-dev
       taskRef:
         name: task-new-commit-image-tag
