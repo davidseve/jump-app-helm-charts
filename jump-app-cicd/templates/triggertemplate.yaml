@@ -29,10 +29,10 @@ spec:
             value: {{ $.Values.functTestRepoBranch }}
           - name: functTestRepo
             value: {{ $.Values.functTestRepo }}
-          - name: helm-git-url
-            value: {{ $.Values.helmGitUrl }}
-          - name: helm-git-revision
-            value: {{ $.Values.helmGitRevision }}
+          # - name: helm-git-url
+          #   value: {{ $.Values.helmGitUrl }}
+          # - name: helm-git-revision
+          #   value: {{ $.Values.helmGitRevision }}
         workspaces:
           - name: app-helm-source
             persistentVolumeClaim:

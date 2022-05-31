@@ -17,13 +17,13 @@ spec:
       type: string
     - name: functTestRepoBranch 
       type: string
-    - name: helm-git-url
-      type: string
-      description: The application helm git repository url
-    - name: helm-git-revision
-      type: string
-      default: main
-      description: The application helm git repository revision
+    # - name: helm-git-url
+    #   type: string
+    #   description: The application helm git repository url
+    # - name: helm-git-revision
+    #   type: string
+    #   default: main
+    #   description: The application helm git repository revision
   workspaces:
    - name: app-helm-source
  
